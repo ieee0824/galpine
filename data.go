@@ -2,10 +2,12 @@ package galpine
 
 import (
 	"errors"
-	"io"
 	"io/ioutil"
 	"strconv"
 	"strings"
+
+	_ "github.com/ieee0824/galpine/statik"
+	"github.com/rakyll/statik/fs"
 )
 
 // sorce "http://www.gsi.go.jp/KOKUJYOHO/MOUNTAIN/data.js"
@@ -99,9 +101,17 @@ func NewData(s string) (*Data, error) {
 	return ret, nil
 }
 
-func NewDatas(r io.Reader) []*Data {
+func NewDatas() []*Data {
+	fs, err := fs.New()
+	if err != nil {
+		return nil
+	}
+	f, err := fs.Open("/data.js")
+	if err != nil {
+		return nil
+	}
 	ret := []*Data{}
-	bin, err := ioutil.ReadAll(r)
+	bin, err := ioutil.ReadAll(f)
 	if err != nil {
 		return nil
 	}
